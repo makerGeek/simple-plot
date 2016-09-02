@@ -5,42 +5,62 @@
 
 <body>
 
-  <fieldset>
+ 
+  <fieldset style="float:left">
     <legend>Let's plot something:</legend>
     X:<br>
-  <textarea name="x" id="X" rows="5" cols="60">1, 2, 3, 4, 5, 6, 7, 8, 9, 10</textarea>
+  <textarea name="x" id="X" rows="5" cols="80">1, 2, 3, 4, 5, 6, 7, 8, 9, 10</textarea>
     <br>
     Y:<br>
-  <textarea name="y" id="Y" rows="5" cols="60">1, 2, 3, 4, 5, 6, 7, 8, 9, 10</textarea>
+  <textarea name="y" id="Y" rows="5" cols="80">1, 2, 3, 4, 5, 6, 7, 8, 9, 10</textarea>
     <br><br>
-    <button type="button" onclick="plot()">plot!</button>
+    <button type="button" onclick="plotXY()">plot!</button>
+  </fieldset><fieldset style="float:right">
+  <legend>Or plot output from <a href="https://github.com/makerGeek/web-landmark-detection">face-landmark-detection</a></legend>
+    Output:<br>
+  <textarea name="output" id="output" rows="12" cols="80">{ "faces_count": 1, "faces":[ { "parts_count": 68, "x" : [ 150 , 153 , 156 , 159 , 171 , 194 , 225 , 261 , 306 , 352 , 387 , 417 , 439 , 448 , 451 , 455 , 460 , 182 , 200 , 230 , 260 , 288 , 330 , 360 , 389 , 417 , 432 , 309 , 309 , 308 , 307 , 276 , 291 , 306 , 322 , 335 , 215 , 231 , 250 , 266 , 249 , 231 , 348 , 366 , 384 , 399 , 385 , 367 , 244 , 267 , 287 , 303 , 322 , 341 , 362 , 341 , 322 , 303 , 286 , 266 , 253 , 286 , 303 , 322 , 352 , 322 , 304 , 286 ], "y" : [ 290 , 333 , 375 , 417 , 457 , 492 , 521 , 545 , 550 , 544 , 523 , 497 , 465 , 425 , 384 , 343 , 301 , 287 , 265 , 257 , 262 , 272 , 272 , 262 , 258 , 267 , 290 , 295 , 323 , 351 , 380 , 391 , 398 , 404 , 399 , 393 , 299 , 291 , 291 , 301 , 305 , 305 , 301 , 291 , 292 , 302 , 307 , 306 , 442 , 437 , 437 , 442 , 438 , 440 , 445 , 456 , 460 , 461 , 459 , 453 , 442 , 445 , 448 , 446 , 445 , 445 , 447 , 444 ] } ] }</textarea>
+  <br><br>
+    <button type="button" onclick="plotOutput()">plot!</button>
   </fieldset>
 <br><br><br>
-  <div id="myDiv" style="width: 480px; height: 400px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+  <div id="myDiv" style="clear:both; width: 480px; height: 400px;"><!-- Plotly chart will be drawn inside this DIV --></div>
   <script>
     var trace1 = {
- x:[], y:[], mode: 'markers'
-};
+	 x:[], y:[], mode: 'markers'
+	};
 
-var data = [ trace1 ];
+	var data = [ trace1 ];
 
-var layout = {
-  title:'Line and Scatter Plot',
-  height: 500,
-  width: 480
-};
+	var layout = {
+	  title:'Line and Scatter Plot',
+	  height: 500,
+	  width: 480
+	};
 
-function getCoordinates(){
-var myArray = document.getElementById("X").value.split(",");
-for(var i=0; i<myArray.length; i++) { trace1.x[i]= +myArray[i]; } 
-myArray = document.getElementById("Y").value.split(",");
-for(var i=0; i<myArray.length; i++) { trace1.y[i]= +myArray[i]; } 
-}
+	function getXYCoordinates(){
+		var myArray = document.getElementById("X").value.split(",");
+		for(var i=0; i<myArray.length; i++) { 
+			trace1.x[i]= +myArray[i]; 
+		} 
+		myArray = document.getElementById("Y").value.split(",");
+		for(var i=0; i<myArray.length; i++) {
+			 trace1.y[i]= +myArray[i]; 
+		 } 
+	}
 
-function plot(){
-getCoordinates();
-Plotly.newPlot('myDiv', [ trace1 ], layout);
-}
+	function plotXY(){
+		getXYCoordinates();
+		Plotly.newPlot('myDiv', [ trace1 ], layout);
+	}
+
+	function plotOutput(){
+		var Json = JSON.parse( document.getElementById("output").value);
+		for(var i=0; i<Json.faces_count; i++){
+			Array.prototype.push.apply(trace1.x, Json.faces[i].x);
+			Array.prototype.push.apply(trace1.y, Json.faces[i].y);
+		}
+		Plotly.newPlot('myDiv', [ trace1 ], layout);
+	}
 
   </script>
 </body>
